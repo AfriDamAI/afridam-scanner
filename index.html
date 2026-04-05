@@ -3,115 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AfriDam AI | Professional Skin Scan</title>
+    <title>AfriDam AI | Clinical Scanner</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,800;1,400;1,800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; selection-background-color: rgba(225, 120, 79, 0.3); }
+        .font-black-italic { font-weight: 800; font-style: italic; }
         .scanner-line {
-            height: 4px;
-            background: linear-gradient(to right, transparent, #3b82f6, transparent);
-            animation: scan 2s infinite ease-in-out;
+            height: 2px;
+            background: #E1784F;
+            box-shadow: 0 0 20px 5px #E1784F;
+            animation: scan 3s infinite ease-in-out;
         }
-        @keyframes scan {
-            0% { top: 0%; }
-            100% { top: 100%; }
-        }
+        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-white text-black overflow-hidden">
 
-    <div id="app" class="min-h-screen flex flex-col items-center justify-center p-4">
+    <div id="app" class="min-h-screen flex flex-col items-center justify-center p-6">
         
-        <div id="step-1" class="max-w-md text-center space-y-6">
-            <div class="inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-xs font-extrabold tracking-widest uppercase">
-                Nurse-Led Clinical AI
+        <nav class="fixed top-0 w-full p-8 flex justify-center">
+            <img src="https://app.afridamai.com/logo.png" alt="AfriDam" class="h-8 invert">
+        </nav>
+
+        <div id="step-1" class="max-w-md text-center space-y-10">
+            <div class="inline-flex items-center gap-2 bg-[#E1784F]/5 px-4 py-2 rounded-full border border-[#E1784F]/10">
+                <i data-lucide="sparkles" class="text-[#E1784F] w-3 h-3"></i>
+                <span class="text-[9px] font-black uppercase tracking-[0.2em] text-[#E1784F]">Clinical Excellence</span>
             </div>
-            <h1 class="text-4xl font-extrabold tracking-tight text-slate-900">
-                Analyze Your Skin in 5 Seconds.
+            <h1 class="text-6xl font-black-italic leading-[1.1] tracking-tighter">
+                Your Skin's <br> <span class="text-[#E1784F]">Best Friend.</span>
             </h1>
-            <p class="text-slate-600 text-lg">
-                Stop guessing. Get a clinical breakdown of your skin biomarkers and matched products.
+            <p class="text-xl font-black opacity-30 italic leading-tight tracking-tighter">
+                Localized protection. <br> Safe care for the heritage.
             </p>
-            <button onclick="startCamera()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xl font-extrabold py-5 rounded-2xl shadow-2xl transition-all transform active:scale-95">
-                START FREE SCAN
+            <button onclick="startCamera()" class="group w-full h-20 bg-black text-white rounded-2xl font-black uppercase text-[11px] tracking-[0.2em] shadow-2xl flex items-center justify-center gap-6 active:scale-95 transition-all">
+                START SCAN <i data-lucide="arrow-right"></i>
             </button>
-            <p class="text-slate-400 text-sm font-medium">No credit card required • NAFDAC Compliant</p>
         </div>
 
-        <div id="step-2" class="hidden relative w-full max-w-sm aspect-[3/4] bg-black rounded-[40px] overflow-hidden shadow-2xl border-[6px] border-white">
-            <video id="video" autoplay playsinline class="w-full h-full object-cover"></video>
-            <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
-                <div class="w-64 h-80 border-2 border-blue-400/50 rounded-[100px] border-dashed"></div>
-                <div class="scanner-line absolute w-full"></div>
+        <div id="step-2" class="hidden relative w-full max-w-sm aspect-[4/5] bg-black rounded-[3rem] overflow-hidden shadow-2xl border-[10px] border-white">
+            <video id="video" autoplay playsinline class="w-full h-full object-cover grayscale-[0.2]"></video>
+            <div class="absolute inset-0 pointer-events-none">
+                <div class="scanner-line absolute w-full z-20"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="w-64 h-80 border-2 border-[#E1784F]/30 rounded-[100px] border-dashed"></div>
+                </div>
             </div>
             <div class="absolute bottom-8 w-full flex flex-col items-center px-6">
-                <button onclick="takePhoto()" class="w-20 h-20 bg-white rounded-full border-[6px] border-slate-200 shadow-2xl active:scale-90 transition-transform"></button>
+                <button onclick="takePhoto()" class="w-20 h-20 bg-white rounded-full border-[6px] border-slate-200 shadow-2xl active:scale-90 transition-all"></button>
             </div>
         </div>
 
-        <div id="step-3" class="hidden max-w-md w-full text-center space-y-8">
-            <div class="relative w-24 h-24 mx-auto">
-                <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
-                <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+        <div id="step-3" class="hidden max-w-md w-full text-center space-y-12">
+            <div class="w-20 h-20 bg-[#4DB6AC] rounded-2xl flex items-center justify-center text-white mx-auto shadow-lg animate-bounce">
+                <i data-lucide="camera" size={32}></i>
             </div>
-            <div class="space-y-2">
-                <h2 id="process-text" class="text-xl font-bold text-blue-600 italic">Nurse AI is waking up...</h2>
-                <p class="text-slate-400 text-sm uppercase tracking-widest font-bold">Clinical Analysis in Progress</p>
-            </div>
-        </div>
-
-        <div id="step-4" class="hidden max-w-md w-full bg-white rounded-[40px] p-10 shadow-2xl border border-slate-100">
-            <h2 class="text-3xl font-extrabold mb-2 text-center">Scan Successful!</h2>
-            <p class="text-slate-500 text-center mb-8">We've generated your melanin-profile report. Enter your details to reveal your results.</p>
-            
             <div class="space-y-4">
-                <input type="text" id="name" placeholder="Full Name" class="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 focus:ring-2 focus:ring-blue-500 outline-none font-semibold">
-                <input type="email" id="email" placeholder="Email Address" class="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 focus:ring-2 focus:ring-blue-500 outline-none font-semibold">
-                <button onclick="complete()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-extrabold text-lg shadow-xl hover:bg-blue-700 transition-all">
-                    VIEW MY CLINICAL REPORT
-                </button>
+                <h2 id="process-text" class="text-3xl font-black-italic text-black italic">Analysis Active...</h2>
+                <div class="h-1.5 w-48 bg-black/5 rounded-full mx-auto overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-[#E1784F] transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <p class="text-[9px] font-black uppercase tracking-[0.5em] opacity-20">Heritage Foundation Check</p>
             </div>
         </div>
 
     </div>
 
     <script>
-        const steps = ['step-1', 'step-2', 'step-3', 'step-4'];
+        lucide.createIcons();
         const processMessages = [
-            "Detecting skin biomarkers...",
-            "Analyzing hyperpigmentation...",
-            "Nurse AI checking hydration levels...",
-            "Matching Orange Group SKUs...",
-            "Finalizing your clinical roadmap..."
+            "Initializing Scanner...",
+            "Detecting Biomarkers...",
+            "Analyzing Melanin...",
+            "Finalizing Report..."
         ];
 
-        function showStep(id) {
-            steps.forEach(s => document.getElementById(s).classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-        }
-
         async function startCamera() {
-            showStep('step-2');
+            document.getElementById('step-1').classList.add('hidden');
+            document.getElementById('step-2').classList.remove('hidden');
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
             document.getElementById('video').srcObject = stream;
         }
 
         function takePhoto() {
-            showStep('step-3');
+            document.getElementById('step-2').classList.add('hidden');
+            document.getElementById('step-3').classList.remove('hidden');
+            
             let i = 0;
             const interval = setInterval(() => {
                 document.getElementById('process-text').innerText = processMessages[i];
+                document.getElementById('progress-bar').style.width = ((i + 1) / processMessages.length) * 100 + "%";
                 i++;
                 if (i >= processMessages.length) {
                     clearInterval(interval);
-                    showStep('step-4');
+                    // REDIRECT TO REGISTER
+                    window.location.href = "https://app.afridamai.com/register";
                 }
-            }, 800);
-        }
-
-        function complete() {
-            alert("This will now redirect to your AfriDam Dashboard once Tobi links the API!");
+            }, 1000);
         }
     </script>
 </body>
