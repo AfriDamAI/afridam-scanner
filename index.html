@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AfriDam AI | Clinical Scanner</title>
+    <title>AfriDam | Skin Scanner</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,800;1,400;1,800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; selection-background-color: rgba(225, 120, 79, 0.3); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #white; }
         .font-black-italic { font-weight: 800; font-style: italic; }
         .scanner-line {
             height: 2px;
@@ -16,147 +15,104 @@
             box-shadow: 0 0 20px 5px #E1784F;
             animation: scan 3s infinite ease-in-out;
             position: absolute;
+            width: 100%;
             z-index: 20;
         }
         @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="bg-white text-black overflow-hidden no-scrollbar">
+<body class="flex flex-col items-center justify-center min-h-screen p-6">
 
-    <div id="app" class="min-h-screen flex flex-col items-center justify-center p-6">
+    <div id="step-1" class="w-full max-w-md text-center space-y-8">
+        <h1 class="text-5xl font-black-italic tracking-tighter">
+            Scan Your <span class="text-[#E1784F]">Skin.</span>
+        </h1>
         
-        <nav class="fixed top-0 w-full p-8 flex justify-center z-[100]">
-            <img src="https://app.afridamai.com/logo.png" alt="AfriDam" class="h-8 invert">
-        </nav>
-
-        <div id="step-1" class="max-w-md text-center space-y-10 animate-in fade-in zoom-in duration-700">
-            <div class="inline-flex items-center gap-2 bg-[#E1784F]/5 px-4 py-2 rounded-full border border-[#E1784F]/10">
-                <i data-lucide="sparkles" class="text-[#E1784F] w-3 h-3"></i>
-                <span class="text-[9px] font-black uppercase tracking-[0.2em] text-[#E1784F]">Clinical Excellence</span>
-            </div>
-            <h1 class="text-6xl font-black-italic leading-[1.1] tracking-tighter">
-                Your Skin's <br> <span class="text-[#E1784F]">Best Friend.</span>
-            </h1>
-            <p class="text-xl font-black opacity-30 italic leading-tight tracking-tighter">
-                Localized protection. <br> Safe care for the heritage.
-            </p>
-            <button onclick="startCamera()" class="group w-full h-20 bg-black text-white rounded-2xl font-black uppercase text-[11px] tracking-[0.2em] shadow-2xl flex items-center justify-center gap-6 active:scale-95 transition-all">
-                START SCAN <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </button>
+        <div class="flex items-start gap-3 bg-slate-50 p-4 rounded-2xl text-left">
+            <input type="checkbox" id="terms" class="mt-1 w-5 h-5 accent-[#E1784F] cursor-pointer">
+            <label for="terms" class="text-[11px] font-bold opacity-60 leading-tight uppercase tracking-wider">
+                I agree to the clinical terms and allow AfriDam AI to process my image for analysis and medical annotation.
+            </label>
         </div>
 
-        <div id="step-2" class="hidden relative w-full max-w-sm aspect-[4/5] bg-black rounded-[3rem] overflow-hidden shadow-2xl border-[10px] border-white transition-all duration-500">
-            <video id="video" autoplay playsinline class="w-full h-full object-cover grayscale-[0.2]"></video>
-            <div class="absolute inset-0 pointer-events-none">
-                <div class="scanner-line w-full"></div>
-                <div class="absolute inset-0 flex items-center justify-center">
-                    <div class="w-64 h-80 border-2 border-[#E1784F]/30 rounded-[100px] border-dashed"></div>
-                </div>
-            </div>
-            <div class="absolute bottom-8 w-full flex flex-col items-center px-6">
-                <button onclick="takePhoto()" class="w-20 h-20 bg-white rounded-full border-[6px] border-slate-200 shadow-2xl active:scale-90 transition-all"></button>
-            </div>
-            <canvas id="canvas" class="hidden"></canvas>
-        </div>
+        <button onclick="checkConsent()" class="w-full h-20 bg-black text-white rounded-2xl font-black italic text-[14px] tracking-widest shadow-2xl active:scale-95 transition-all">
+            START CAMERA
+        </button>
+    </div>
 
-        <div id="step-3" class="hidden max-w-md w-full text-center space-y-12">
-            <div class="w-20 h-20 bg-[#4DB6AC] rounded-2xl flex items-center justify-center text-white mx-auto shadow-lg animate-bounce">
-                <i data-lucide="activity" class="w-8 h-8"></i>
-            </div>
-            <div class="space-y-4">
-                <h2 id="process-text" class="text-3xl font-black-italic text-black italic">Analysis Active...</h2>
-                <div class="h-1.5 w-48 bg-black/5 rounded-full mx-auto overflow-hidden">
-                    <div id="progress-bar" class="h-full bg-[#E1784F] transition-all duration-500" style="width: 0%"></div>
-                </div>
-                <p class="text-[9px] font-black uppercase tracking-[0.5em] opacity-20">Heritage Foundation Check</p>
-            </div>
+    <div id="step-2" class="hidden relative w-full max-w-sm aspect-[4/5] bg-black rounded-[3rem] overflow-hidden border-[10px] border-white shadow-2xl">
+        <video id="video" autoplay playsinline class="w-full h-full object-cover"></video>
+        <div class="scanner-line"></div>
+        <div class="absolute bottom-8 w-full flex justify-center">
+            <button onclick="takePhoto()" class="w-20 h-20 bg-white rounded-full border-[6px] border-slate-200 shadow-2xl active:scale-90 transition-all"></button>
         </div>
+        <canvas id="canvas" class="hidden"></canvas>
+    </div>
 
+    <div id="step-3" class="hidden text-center space-y-6">
+        <div class="w-16 h-16 border-4 border-[#4DB6AC] border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <h2 id="status" class="text-2xl font-black-italic italic">Analyzing...</h2>
+    </div>
+
+    <div id="step-4" class="hidden text-center space-y-8">
+        <h2 class="text-4xl font-black-italic italic">Analysis Ready.</h2>
+        <button onclick="goToRegister()" class="w-full max-w-sm h-20 bg-[#E1784F] text-white rounded-2xl font-black italic tracking-widest shadow-xl active:scale-95 transition-all">
+            VIEW RESULTS
+        </button>
     </div>
 
     <script>
-        lucide.createIcons();
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
-        const progressBar = document.getElementById('progress-bar');
-        const processText = document.getElementById('process-text');
 
-        const processMessages = [
-            "Initializing Scanner...",
-            "Detecting Biomarkers...",
-            "Analyzing Melanin...",
-            "Saving Clinical Data...",
-            "Finalizing Report..."
-        ];
+        function checkConsent() {
+            if (document.getElementById('terms').checked) {
+                startCamera();
+            } else {
+                alert("Please agree to the clinical terms to proceed.");
+            }
+        }
 
         async function startCamera() {
             document.getElementById('step-1').classList.add('hidden');
             document.getElementById('step-2').classList.remove('hidden');
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } } 
-                });
-                video.srcObject = stream;
-            } catch (err) {
-                alert("Camera access is required for clinical analysis.");
-            }
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+            video.srcObject = stream;
         }
 
         async function takePhoto() {
-            // 1. Switch UI
             document.getElementById('step-2').classList.add('hidden');
             document.getElementById('step-3').classList.remove('hidden');
-            
-            // 2. Capture Frame
-            const context = canvas.getContext('2d');
+
+            const ctx = canvas.getContext('2d');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(video, 0, 0);
             
-            // 3. Convert to Blob for API
-            const imageBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
+            const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9));
+            
+            // Send to Tobi's Backend (Update the URL once Tobi confirms)
+            const formData = new FormData();
+            formData.append('image', blob); // This matches the 'image' key we discussed
 
-            // 4. Hit Backend Endpoints (Rule 6: Referring to Backend Endpoints)
-            // Endpoint: POST /api/v2/skin-diagnosis
-            uploadData(imageBlob);
-
-            // 5. Run UI Animation Loop
-            let i = 0;
-            const interval = setInterval(() => {
-                processText.innerText = processMessages[i];
-                progressBar.style.width = ((i + 1) / processMessages.length) * 100 + "%";
-                i++;
-                
-                if (i >= processMessages.length) {
-                    clearInterval(interval);
-                    // Final Redirect to Register
-                    window.location.href = "https://app.afridamai.com/register";
-                }
-            }, 1200);
+            fetch('https://api.afridamai.com/api/v2/skin-diagnosis', {
+                method: 'POST',
+                body: formData
+            }).then(() => {
+                console.log("Data Sent");
+                setTimeout(() => {
+                    document.getElementById('step-3').classList.add('hidden');
+                    document.getElementById('step-4').classList.remove('hidden');
+                }, 2000);
+            }).catch(() => {
+                // Still show results button even if upload fails
+                document.getElementById('step-3').classList.add('hidden');
+                document.getElementById('step-4').classList.remove('hidden');
+            });
         }
 
-        async function uploadData(blob) {
-            const formData = new FormData();
-            formData.append('image', blob);
-
-            try {
-                // Save to Skin Diagnosis for Admin Portal / Annotation Team
-                await fetch('https://api.afridamai.com/api/v2/skin-diagnosis', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                // Create Analyzer Entry so it's tracked in the system
-                await fetch('https://api.afridamai.com/api/v2', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                console.log("Clinical data synced to Center of Truth.");
-            } catch (error) {
-                console.error("Clinical sync failed, but proceeding to registration.");
-            }
+        function goToRegister() {
+            window.location.href = "https://app.afridamai.com/register";
         }
     </script>
 </body>
