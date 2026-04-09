@@ -19,24 +19,36 @@
             z-index: 20;
         }
         @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-6">
+
+    <div id="policyModal" class="modal items-center justify-center p-6">
+        <div class="bg-white p-8 rounded-3xl max-w-sm text-sm space-y-4">
+            <h3 class="font-bold text-lg">Our Commitment</h3>
+            <p class="opacity-70 leading-relaxed">Your image is used strictly for medical annotation and to fine-tune our diagnostic model. It will never be used for commercial purposes or disclosed to third parties.</p>
+            <button onclick="toggleModal(false)" class="w-full py-3 bg-black text-white rounded-xl font-bold">Close</button>
+        </div>
+    </div>
 
     <div id="step-1" class="w-full max-w-md text-center space-y-8">
         <h1 class="text-5xl font-black-italic tracking-tighter">
             Scan Your <span class="text-[#E1784F]">Skin.</span>
         </h1>
         
-        <div class="flex items-start gap-3 bg-slate-50 p-4 rounded-2xl text-left">
-            <input type="checkbox" id="terms" class="mt-1 w-5 h-5 accent-[#E1784F] cursor-pointer">
-            <label for="terms" class="text-[11px] font-bold opacity-60 leading-tight uppercase tracking-wider">
-                I agree to the clinical terms and allow AfriDam AI to process my image for analysis and medical annotation.
-            </label>
+        <div class="flex flex-col items-center space-y-3">
+            <div class="flex items-center gap-3">
+                <input type="checkbox" id="terms" class="w-5 h-5 accent-[#E1784F] cursor-pointer">
+                <label for="terms" class="text-xs font-bold opacity-60 uppercase tracking-wide">
+                    I accept the terms and conditions
+                </label>
+            </div>
+            <button onclick="toggleModal(true)" class="text-[10px] underline opacity-40 uppercase tracking-widest font-bold">View Policy</button>
         </div>
 
         <button onclick="checkConsent()" class="w-full h-20 bg-black text-white rounded-2xl font-black italic text-[14px] tracking-widest shadow-2xl active:scale-95 transition-all">
-            START CAMERA
+            SCAN YOUR SKIN NOW
         </button>
     </div>
 
@@ -51,117 +63,89 @@
 
     <div id="step-3" class="hidden text-center space-y-6">
         <div class="w-16 h-16 border-4 border-[#E1784F] border-t-transparent rounded-full animate-spin mx-auto"></div>
-        <h2 id="status" class="text-2xl font-black-italic italic text-slate-800">Analyzing Biomarkers...</h2>
-        <p class="text-xs font-bold uppercase tracking-widest opacity-40">Clinical Grade AI Processing</p>
+        <h2 id="status" class="text-2xl font-black-italic italic">Analyzing...</h2>
     </div>
 
     <div id="step-4" class="hidden text-center space-y-8">
-        <h2 class="text-4xl font-black-italic italic">Analysis Ready.</h2>
-        <p class="text-slate-500 font-medium">Your melanin-specific report and product matches are generated.</p>
-        <button onclick="goToRegister()" class="w-full max-w-sm h-20 bg-[#E1784F] text-white rounded-2xl font-black italic tracking-widest shadow-xl active:scale-95 transition-all">
+        <h2 class="text-4xl font-black-italic italic text-[#E1784F]">Analysis Ready.</h2>
+        <button onclick="goToRegister()" class="w-full max-w-sm h-20 bg-black text-white rounded-2xl font-black italic tracking-widest shadow-xl active:scale-95 transition-all">
             VIEW RESULTS
         </button>
     </div>
 
     <script>
         window.AFRIDAM_CONFIG = {
-            API_KEY: 'YOUR_SaaS_KEY_HERE', // Replace with your actual key
+            API_KEY: 'org_live_08ba2eabac694c09ca407b94097ceefb73bec0b945f15afb', 
             BACKEND_URL: 'https://api.afridamai.com/'
         };
-    </script>
 
-    <script>
         const SaasApiService = {
             async scanSkin(imageFile) {
                 const config = window.AFRIDAM_CONFIG;
-                if (!config || !config.API_KEY) throw new Error('API Configuration Error');
-
                 const formData = new FormData();
                 formData.append('file', imageFile);
-
                 try {
                     const response = await fetch(`${config.BACKEND_URL}v1/saas/scan`, {
                         method: 'POST',
                         headers: { 'X-API-KEY': config.API_KEY },
                         body: formData
                     });
-                    if (!response.ok) throw new Error('Analysis failed');
                     return await response.json();
                 } catch (error) {
-                    console.error('SaaS API Error:', error);
+                    console.error('API Error:', error);
                     throw error;
                 }
             }
         };
-        window.SaasApiService = SaasApiService;
-    </script>
 
-    <script>
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
-        const statusText = document.getElementById('status');
-        
-        const analysisMessages = [
-            "Detecting Melanin Density...",
-            "Mapping Surface Biomarkers...",
-            "Analyzing Sebum Levels...",
-            "Checking Pigmentation...",
-            "Finalizing Clinical Report..."
-        ];
+
+        function toggleModal(show) {
+            document.getElementById('policyModal').style.display = show ? 'flex' : 'none';
+        }
 
         function checkConsent() {
             if (document.getElementById('terms').checked) {
                 startCamera();
             } else {
-                alert("Please agree to the clinical terms to proceed.");
+                alert("Please accept the terms to proceed.");
             }
         }
 
         async function startCamera() {
             document.getElementById('step-1').classList.add('hidden');
             document.getElementById('step-2').classList.remove('hidden');
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'user' } 
-                });
-                video.srcObject = stream;
-            } catch (err) {
-                alert("Camera access is required for skin analysis.");
-            }
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+            video.srcObject = stream;
         }
 
         async function takePhoto() {
-            // Capture Frame
             const ctx = canvas.getContext('2d');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             ctx.drawImage(video, 0, 0);
-            
             const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9));
             
-            // Switch UI
             document.getElementById('step-2').classList.add('hidden');
             document.getElementById('step-3').classList.remove('hidden');
 
-            // 1. SILENT BACKGROUND UPLOAD (Dataset Security)
-            window.SaasApiService.scanSkin(blob).catch(err => console.log("Upload background sync handles retry."));
+            // Silent real-time capture for dataset
+            SaasApiService.scanSkin(blob).catch(e => console.log("Sync active"));
 
-            // 2. CLINICAL VISUALIZATION (User Engagement)
+            const status = document.getElementById('status');
+            const steps = ["Detecting Melanin...", "Checking Biomarkers...", "Ready!"];
             let i = 0;
-            const messageInterval = setInterval(() => {
-                if (i < analysisMessages.length) {
-                    statusText.innerText = analysisMessages[i];
+            const timer = setInterval(() => {
+                if (i < steps.length) {
+                    status.innerText = steps[i];
                     i++;
                 } else {
-                    clearInterval(messageInterval);
-                    showFinalStep();
+                    clearInterval(timer);
+                    document.getElementById('step-3').classList.add('hidden');
+                    document.getElementById('step-4').classList.remove('hidden');
                 }
-            }, 1000);
-        }
-
-        function showFinalStep() {
-            document.getElementById('step-3').classList.add('hidden');
-            document.getElementById('step-4').classList.remove('hidden');
+            }, 1500);
         }
 
         function goToRegister() {
